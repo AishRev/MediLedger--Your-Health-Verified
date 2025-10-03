@@ -1,0 +1,16 @@
+# Dependency directories
+node_modules/
+client/node_modules/
+
+# Truffle build artifacts
+build/
+
+# Log files
+*.log
+
+# Environment variables
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
