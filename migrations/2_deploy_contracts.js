@@ -5,8 +5,15 @@
 // };
 
 
-    const HealthChain = artifacts.require("HealthChain");
-    module.exports = function (deployer) {
-      deployer.deploy(HealthChain);
-    };
+    // const HealthChain = artifacts.require("HealthChain");
+    // module.exports = function (deployer) {
+    //   deployer.deploy(HealthChain);
+    // };
 
+const HealthChain = artifacts.require("HealthChain");
+const DrugSupplyChain = artifacts.require("DrugSupplyChain");
+
+module.exports = function (deployer) {
+  deployer.deploy(HealthChain);
+  deployer.deploy(DrugSupplyChain);
+};

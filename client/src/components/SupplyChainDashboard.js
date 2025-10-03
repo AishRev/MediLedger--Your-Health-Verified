@@ -1,118 +1,119 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-const SupplyChainDashboard = ({ drugContract, account, setView }) => {
-    const [allManufacturers, setAllManufacturers] = useState([]);
-    const [manufacturerNameToRegister, setManufacturerNameToRegister] = useState('');
+const SupplyChainDashboard = ({ contract, account, setView }) => {
+    const [manufacturerView, setManufacturerView] = useState('loading');
+    const [manufacturerInfo, setManufacturerInfo] = useState(null);
+    
+    const [manufacturerNameInput, setManufacturerNameInput] = useState('');
     const [drugNameInput, setDrugNameInput] = useState('');
     const [drugIdToUpdate, setDrugIdToUpdate] = useState('');
     const [drugDetails, setDrugDetails] = useState(null);
+    
     const [error, setError] = useState('');
+    
+    const handleTxError = (err) => { setError(err.reason || "An error occurred.") };
 
-    const handleTxError = (err) => {
-        if (err.code === 4001) {
-            setError("Transaction rejected in MetaMask.");
-            return;
+    const loadInitialData = useCallback(async () => {
+        if (contract) {
+            setError('');
+            try {
+                const data = await contract.getMyManufacturerProfile();
+                setManufacturerInfo({ id: `M${Number(data[0])}`, name: data[1] });
+                setManufacturerView('dashboard');
+            } catch (err) {
+                setManufacturerView('register');
+            }
         }
-        setError(err.reason || "An error occurred. Check the console for details.");
-    };
+    }, [contract]);
 
     useEffect(() => {
-        const loadManufacturers = async () => {
-            if (drugContract) {
-                try {
-                    const [mfgAddresses, mfgNames] = await drugContract.getAllManufacturers();
-                    setAllManufacturers(mfgNames.map((name, i) => ({ name, address: mfgAddresses[i] })));
-                } catch (err) {
-                    console.error("Could not fetch manufacturer list:", err);
-                    setError("Could not fetch the list of registered manufacturers.");
-                }
-            }
-        };
-        loadManufacturers();
-    }, [drugContract]);
-    
-    const handleRegisterManufacturer = async () => {
-        if (!manufacturerNameToRegister) return;
-        setError('');
+        loadInitialData();
+    }, [loadInitialData]);
+
+    const handleRegister = async () => {
+        if (!manufacturerNameInput) return;
         try {
-          const tx = await drugContract.registerManufacturer(manufacturerNameToRegister);
-          await tx.wait();
-          setAllManufacturers(prev => [...prev, { name: manufacturerNameToRegister, address: account }]);
-          setManufacturerNameToRegister('');
+            const tx = await contract.registerManufacturer(manufacturerNameInput);
+            await tx.wait();
+            await loadInitialData();
         } catch (err) { handleTxError(err); }
-      };
+    };
 
     const handleAddDrug = async () => {
         if (!drugNameInput) return;
-        setError('');
         try {
-          const tx = await drugContract.addDrug(drugNameInput);
-          await tx.wait();
-          alert('Drug added successfully!');
-          setDrugNameInput('');
-        } catch (err) { handleTxError(err); }
-    };
-      
-    const handleUpdateDrugState = async () => {
-        if(!drugIdToUpdate) return;
-        setError('');
-        try {
-          const tx = await drugContract.updateDrugState(drugIdToUpdate);
-          await tx.wait();
-          alert('Drug state updated!');
-          handleGetDrugDetails();
+            const tx = await contract.addDrug(drugNameInput);
+            await tx.wait();
+            alert('Drug added successfully!');
+            setDrugNameInput('');
         } catch (err) { handleTxError(err); }
     };
 
-    const handleGetDrugDetails = async () => {
-        if(!drugIdToUpdate) return;
-        setError('');
-        setDrugDetails(null);
+    const handleUpdateState = async () => {
+        if (!drugIdToUpdate) return;
         try {
-          const drug = await drugContract.drugs(drugIdToUpdate);
-          if (drug.id === 0n) { // drug.id is a BigInt, compare with 0n
-              setError(`Drug with ID ${drugIdToUpdate} not found.`);
-              return;
-          }
-          const history = await drugContract.getDrugHistory(drugIdToUpdate);
-          setDrugDetails({ name: drug.name, manufacturer: drug.manufacturer, currentState: Number(drug.currentState), history });
+            const tx = await contract.updateDrugState(drugIdToUpdate);
+            await tx.wait();
+            alert('Drug state updated!');
+            handleGetDetails();
+        } catch (err) { handleTxError(err); }
+    };
+
+    const handleGetDetails = async () => {
+        if (!drugIdToUpdate) return;
+        setError('');
+        try {
+            const drug = await contract.drugs(drugIdToUpdate);
+            if (drug.id === 0n) {
+                setError(`Drug with ID ${drugIdToUpdate} not found.`);
+                setDrugDetails(null);
+                return;
+            }
+            const history = await contract.getDrugHistory(drugIdToUpdate);
+            const mfg = await contract.manufacturers(drug.manufacturerId);
+            setDrugDetails({ 
+                name: drug.name, 
+                manufacturerName: mfg.name, 
+                currentState: Number(drug.currentState), 
+                history 
+            });
         } catch(err) {
             handleTxError(err);
+            setDrugDetails(null);
         }
     };
 
-    return (
-        <div className="dashboard">
-            <button className="back-button" onClick={() => setView('selector')}>← Back to Home</button>
-            {error && <p className="error-message">{error}</p>}
+    const renderRegisterView = () => (
+        <div className="dashboard-section">
+            <h2>Register as a Manufacturer</h2>
+            <p>Please provide your company name to join the supply chain network.</p>
+            <input type="text" placeholder="Enter Company Name" value={manufacturerNameInput} onChange={e => setManufacturerNameInput(e.target.value)} />
+            <button onClick={handleRegister}>Register</button>
+        </div>
+    );
+
+    const renderDashboardView = () => (
+        <div>
             <div className="dashboard-section">
-                <h2>Manufacturer Directory</h2>
-                {allManufacturers.length > 0 ? (
-                    <ul>{allManufacturers.map(mfg => <li key={mfg.address}><strong>{mfg.name}</strong> ({mfg.address})</li>)}</ul>
-                ) : (
-                    <p>No manufacturers are registered in the system yet.</p>
-                )}
+                <h2>Manufacturer Dashboard</h2>
+                <p><strong>Manufacturer ID:</strong> {manufacturerInfo?.id}</p>
+                <p><strong>Company Name:</strong> {manufacturerInfo?.name}</p>
             </div>
             <div className="dashboard-section">
-                <h2>Register as Manufacturer</h2>
-                <input type="text" placeholder="Enter Company Name" value={manufacturerNameToRegister} onChange={e => setManufacturerNameToRegister(e.target.value)} />
-                <button onClick={handleRegisterManufacturer}>Register</button>
-            </div>
-            <div className="dashboard-section">
-                <h2>Add New Drug to Supply Chain</h2>
+                <h3>Add New Drug to Supply Chain</h3>
                 <input type="text" placeholder="Drug Name (e.g., Paracetamol 500mg)" value={drugNameInput} onChange={e => setDrugNameInput(e.target.value)} />
                 <button onClick={handleAddDrug}>Add Drug</button>
             </div>
             <div className="dashboard-section">
-                <h2>Track Drug</h2>
-                <input type="number" placeholder="Enter Drug ID to Track or Update" value={drugIdToUpdate} onChange={e => setDrugIdToUpdate(e.target.value)} />
-                <button onClick={handleGetDrugDetails}>Track</button>
-                <button onClick={handleUpdateDrugState}>Scan Checkpoint</button>
+                <h3>Track a Drug</h3>
+                <input type="number" placeholder="Enter Drug ID" value={drugIdToUpdate} onChange={e => setDrugIdToUpdate(e.target.value)} />
+                <button onClick={handleGetDetails}>Track Drug</button>
+                <button onClick={handleUpdateState}>Scan Checkpoint</button>
                 {drugDetails && (
                     <div>
-                        <h3>Drug #{drugIdToUpdate} Details</h3>
+                        <h4>Drug #{drugIdToUpdate} Details</h4>
                         <p><strong>Name:</strong> {drugDetails.name}</p>
-                        <p><strong>Manufacturer:</strong> {drugDetails.manufacturer}</p>
+                        <p><strong>Manufacturer:</strong> {drugDetails.manufacturerName}</p>
                         <p><strong>Current State:</strong> {['Manufactured', 'In-Transit', 'At Pharmacy', 'Delivered'][drugDetails.currentState]}</p>
                         <h4>History:</h4>
                         <ul>
@@ -125,6 +126,17 @@ const SupplyChainDashboard = ({ drugContract, account, setView }) => {
                     </div>
                 )}
             </div>
+        </div>
+    );
+
+    return (
+        <div className="dashboard">
+            <button className="back-button" onClick={() => setView('selector')}>← Back to Home</button>
+            {error && <p className="error-message">{error}</p>}
+            
+            {manufacturerView === 'loading' && <p>Loading manufacturer information...</p>}
+            {manufacturerView === 'register' && renderRegisterView()}
+            {manufacturerView === 'dashboard' && renderDashboardView()}
         </div>
     );
 };

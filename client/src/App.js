@@ -384,27 +384,30 @@
 
 // export default App;
 
-
 import { useState } from 'react';
 import { ethers } from 'ethers';
-import HEALTHCHAIN_ABI from './HealthChain.json'; // The single, unified ABI
+import HEALTHCHAIN_ABI from './HealthChain.json';
+import DRUG_SUPPLY_CHAIN_ABI from './DrugSupplyChain.json';
 
 // Import Components
 import Login from './components/Login';
 import DashboardSelector from './components/DashboardSelector';
 import PatientDashboard from './components/PatientDashboard';
 import DoctorDashboard from './components/DoctorDashboard';
+import SupplyChainDashboard from './components/SupplyChainDashboard';
 
 import './App.css';
 
 function App() {
   const [account, setAccount] = useState(null);
-  const [contract, setContract] = useState(null);
+  const [healthContract, setHealthContract] = useState(null);
+  const [drugContract, setDrugContract] = useState(null);
   const [view, setView] = useState('login');
   const [error, setError] = useState('');
 
-  // --- IMPORTANT: Paste your SINGLE NEW contract address here ---
-  const contractAddress = "0xd7539fD5E3d476943e39E5E3e483811ABE3F077D";
+  // --- IMPORTANT: Paste your TWO NEW contract addresses here ---
+  const healthContractAddress = "0x4DFF689096ffBeb7Dde2772b11B6d5bD5897aB4F";
+  const drugContractAddress = "0xDBF80994DBebF2e8faAaB21151f76d20876D4475";
 
   const connectToBlockchain = async () => {
     setError('');
@@ -416,13 +419,15 @@ function App() {
         const address = await signer.getAddress();
         setAccount(address);
 
-        const healthChainContract = new ethers.Contract(contractAddress, HEALTHCHAIN_ABI.abi, signer);
-        setContract(healthChainContract);
+        const health = new ethers.Contract(healthContractAddress, HEALTHCHAIN_ABI.abi, signer);
+        const drug = new ethers.Contract(drugContractAddress, DRUG_SUPPLY_CHAIN_ABI.abi, signer);
         
+        setHealthContract(health);
+        setDrugContract(drug);
         setView('selector');
       } catch (err) {
         console.error("Connection error:", err);
-        setError("Failed to connect. Please ensure you performed the 'Hard Reset' and are using the correct contract address and ABI file.");
+        setError("Failed to connect. Please ensure you performed the 'Hard Reset' and are using correct contract addresses and ABI files.");
       }
     } else {
       setError("Please install MetaMask.");
@@ -434,9 +439,11 @@ function App() {
       case 'selector':
         return <DashboardSelector setView={setView} />;
       case 'patient':
-        return <PatientDashboard contract={contract} account={account} setView={setView} />;
+        return <PatientDashboard contract={healthContract} account={account} setView={setView} />;
       case 'doctor':
-        return <DoctorDashboard contract={contract} account={account} setView={setView} />;
+        return <DoctorDashboard contract={healthContract} account={account} setView={setView} />;
+      case 'supplychain':
+        return <SupplyChainDashboard contract={drugContract} account={account} setView={setView} />;
       case 'login':
       default:
         return <Login connectToBlockchain={connectToBlockchain} />;
@@ -446,7 +453,7 @@ function App() {
   return (
     <div className="app-container">
        <header className="app-header">
-        <h1>HealthChain</h1>
+        <h1>MediLedger</h1>
         <p className="account-info">{account ? `Connected: ${account.substring(0, 6)}...${account.substring(38)}` : "Not Connected"}</p>
       </header>
       {error && <p className="error-message">{error}</p>}
