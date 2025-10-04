@@ -61,3 +61,21 @@ Follow these instructions to set up, deploy, and run the project on your local m
 - [Truffle Suite](https://trufflesuite.com/)  
   ```bash
   npm install -g truffle
+
+### 🔧 Installation & Setup (The "Hard Reset" Method)  
+
+This method ensures a **clean environment** and prevents synchronization errors.  
+
+#### 1️⃣ Clone the Repository  
+```bash
+git clone https://github.com/AishRev/MediLedger--Your-Health-Verified.git
+cd MediLedger--Your-Health-Verified
+
+cd client
+npm install
+
+cd ..
+truffle migrate --reset
+
+cd client
+npm start
