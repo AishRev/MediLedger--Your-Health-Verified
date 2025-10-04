@@ -51,6 +51,12 @@ The platform is divided into **three distinct portals**, each with its own set o
 
 ---
 
+## 📜 License  
+
+This project is licensed under the terms of the [MIT License](./LICENSE).
+
+---
+
 ## 🚀 Getting Started  
 
 Follow these instructions to set up, deploy, and run the project on your local machine.  
@@ -61,6 +67,8 @@ Follow these instructions to set up, deploy, and run the project on your local m
 - [Truffle Suite](https://trufflesuite.com/)  
   ```bash
   npm install -g truffle
+
+---
 
 ### 🔧 Installation & Setup (The "Hard Reset" Method)  
 
@@ -79,3 +87,6 @@ truffle migrate --reset
 
 cd client
 npm start
+
+Your browser will open to:
+👉 http://localhost:3000
