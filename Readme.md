@@ -1,110 +1,96 @@
-MediLedger
-Tagline: Your Health, Verified.
+# 🏥 MediLedger  
+**Tagline:** *Secure. Immutable. Yours.*
 
-MediLedger is a decentralized healthcare management platform built on the Ethereum blockchain. It provides a secure, transparent, and patient-centric system for managing electronic health records (EHR) and facilitating controlled data sharing between patients and doctors.
+---
 
-✨ Features
-This project demonstrates a robust proof-of-concept for a blockchain-based healthcare system with the following features:
+## 🩸 Overview  
+**MediLedger** is a comprehensive **decentralized application (DApp)** built on the **Ethereum blockchain** that revolutionizes healthcare data management.  
+It provides a **secure, transparent, and patient-centric platform** for managing:  
+- Electronic Health Records (EHR)  
+- Pharmaceutical Supply Chain  
+- Clinical Trials  
+- Insurance Claims  
 
-Patient Portal:
+MediLedger puts **control back into the hands of patients, doctors, manufacturers, and insurers** through blockchain transparency.
 
-Securely register as a patient using an Ethereum wallet.
+---
 
-Receive a unique, user-friendly Patient ID (e.g., P1, P2).
+## 🖼️ Application Preview  
+MediLedger features a **clean, modern, and multi-portal interface** for different user roles, starting with a central dashboard:
+![Selector Dashboard](./assets/LandingPage.png)(./assets/LP1.png) 
 
-Add and view your own immutable medical records (represented as hashes).
+### 👤 Patient Portal  
+![Patient Portal](./assets/Patient.png)  
+### 🩺 Doctor Portal  
+![Doctor Portal](./assets/Doctor.png)  
+### 💊 Supply Chain Portal  
+![Supply Chain Portal](./assets/Supply.png)
+### 🔬 Clinical Trial Portal
+![Clinical Trial Portal](./assets/Clinic.png)
+### 📄 Insurance Claim Portal
+![Insurance Claim Portal](./assets/Insurance.png)
 
-Grant access to your records to registered doctors using their unique Doctor ID.
 
-Doctor Portal:
+---
 
-Securely register as a healthcare professional.
+## ✨ Core Features  
 
-Receive a unique, user-friendly Doctor ID (e.g., D1, D2).
+### 👤 Patient Portal  
+- **Decentralized Identity:** Register securely using an Ethereum wallet and receive a unique Patient ID (e.g., `P1`).  
+- **Record Management:** Add and view your immutable medical records on the blockchain.  
+- **Access Control:** Grant and revoke access to your records for doctors using their Doctor ID (e.g., `D1`).  
+- **Service Interaction:** Consent to join clinical trials and submit insurance claims directly from your dashboard.  
 
-View a directory of all registered patients in the system.
+---
 
-Access the medical records of patients who have granted you permission.
+### 🩺 Doctor Portal  
+- **Professional Registration:** Register as a healthcare provider and receive a Doctor ID (e.g., `D1`).  
+- **Secure Record Viewing:** Access patient records only if granted explicit permission.  
+- **Claim Verification:** Review and verify insurance claims from your patients, serving as a trusted intermediary.  
 
-Decentralized & Secure:
+---
 
-All data and access rules are managed by a Solidity smart contract on a private Ethereum network.
+### 💊 Drug Supply Chain Portal  
+- **Manufacturer Registration:** Pharmaceutical companies can register and get a unique Manufacturer ID.  
+- **Drug Tokenization:** Add new drug batches as blockchain tokens, ensuring authenticity and traceability.  
+- **Track and Trace:** Update drug status (e.g., *In-Transit*, *At Pharmacy*) for transparency and anti-counterfeiting.  
 
-Users interact with the application via MetaMask, ensuring their private keys never leave their wallet.
+---
 
-Patient and doctor identities are pseudonymous, linked only to their wallet addresses.
+### 🔬 Clinical Trial Portal  
+- **Trial Creation:** Research institutions can create and log trials on-chain with complete transparency.  
+- **Tamper-Proof Data Logging:** Log anonymized data hashes for verifiable research integrity.  
+- **Patient Consent:** Patients can securely consent to trial participation recorded on the blockchain.  
 
-🛠️ Tech Stack
-Blockchain: Solidity, Truffle Suite, Ganache
+---
 
-Front-End: React.js, Ethers.js, JavaScript (ES6+), CSS3
+### 📄 Insurance Claim Portal  
+- **Seamless Submission:** Patients can file insurance claims for treatments directly.  
+- **Multi-Party Verification:** Claims undergo doctor verification and insurer approval, each step immutably recorded.  
+- **Transparent Status Tracking:** Track claim progress from submission to approval or rejection.  
 
-Wallet: MetaMask
+---
 
-🚀 Getting Started
-Follow these instructions to set up and run the project on your local machine.
+## 🛠️ Technology Stack  
+| Component | Technology |
+|------------|-------------|
+| **Blockchain** | Solidity, Truffle Suite, Ganache |
+| **Front-End** | React.js, Ethers.js, JavaScript (ES6+), CSS3 |
+| **Wallet & Authentication** | MetaMask |
 
-Prerequisites
-Node.js (v14 or higher)
+---
 
-Truffle Suite (npm install -g truffle)
+## 📜 License  
+This project is licensed under the terms of the **MIT License**.
 
-Ganache UI
+---
 
-MetaMask Browser Extension
+## 🚀 Getting Started  
+Follow these steps to set up, deploy, and run the project locally.
 
-Installation & Setup
-Clone the repository:
-
-git clone <your-repository-url>
-cd <your-repository-folder>
-
-Install front-end dependencies:
-Navigate to the client directory and install the required npm packages.
-
-cd client
-npm install
-
-Set up the local blockchain:
-
-Open the Ganache UI application.
-
-Create a new workspace (e.g., "MediLedger").
-
-Note the RPC Server URL (e.g., HTTP://127.0.0.1:7545) and Network ID (e.g., 5777).
-
-Configure MetaMask:
-
-Add Ganache as a custom network using the RPC URL and Network ID from the previous step.
-
-Import one of the pre-funded accounts from Ganache into MetaMask by copying its private key.
-
-Deploy the Smart Contract:
-
-Navigate back to the root project directory.
-
-Run the migration command to compile and deploy the HealthChain.sol contract.
-
-Important: This step must be done after starting Ganache.
-
-truffle migrate --reset
-
-Connect the Front-End to the Contract:
-
-After deployment, Truffle will output the address of the newly created contract. Copy this address.
-
-Open the client/src/App.js file.
-
-Paste the copied contract address into the contractAddress variable.
-
-Copy the HealthChain.json ABI file from build/contracts/ into the client/src/ directory, replacing the existing one.
-
-Run the application:
-
-Navigate back to the client directory.
-
-Start the React development server.
-
-npm start
-
-Your browser should open to http://localhost:3000 with the MediLedger application running.
+### ✅ Prerequisites  
+Make sure you have the following installed:  
+- **Node.js** (v14 or higher)  
+- **Truffle Suite**  
+  ```bash
+  npm install -g truffle
