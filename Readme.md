@@ -1,5 +1,5 @@
 # 🏥 MediLedger  
-**Tagline:** *Secure. Immutable. Yours.*
+**Tagline:** *Your Health, Verified.*
 
 ---
 
@@ -17,7 +17,8 @@ MediLedger puts **control back into the hands of patients, doctors, manufacturer
 
 ## 🖼️ Application Preview  
 MediLedger features a **clean, modern, and multi-portal interface** for different user roles, starting with a central dashboard:
-![Selector Dashboard](./assets/LandingPage.png)(./assets/LP1.png) 
+![Selector Dashboard](./assets/LandingPage.png)
+![Selector Dashboard](./assets/LP1.png)
 
 ### 👤 Patient Portal  
 ![Patient Portal](./assets/Patient.png)  
@@ -28,7 +29,7 @@ MediLedger features a **clean, modern, and multi-portal interface** for differen
 ### 🔬 Clinical Trial Portal
 ![Clinical Trial Portal](./assets/Clinic.png)
 ### 📄 Insurance Claim Portal
-![Insurance Claim Portal](./assets/Insurance.png)
+![Insurance Claim Portal](./assets/Insuranceclaim.png)
 
 
 ---
@@ -94,3 +95,34 @@ Make sure you have the following installed:
 - **Truffle Suite**  
   ```bash
   npm install -g truffle
+Ganache
+MetaMask Browser Extension
+
+## 🔧 Installation & Setup (Quick Start)
+
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/AishRev/MediLedger--Your-Health-Verified.git
+cd MediLedger--Your-Health-Verified
+```
+### 2️⃣ Environment Reset
+Close Ganache, delete the build/ folder.
+In client/, remove node_modules/ and package-lock.json.
+Restart Ganache with a new workspace.
+Reset MetaMask → Settings → Advanced → Reset Account.
+### 3️⃣ Install & Deploy
+```bash
+cd client && npm install && cd ..
+truffle migrate --reset
+``` 
+4️⃣ Configure Front-End
+Copy the four new ABIs (HealthChain.json, DrugSupplyChain.json, ClinicalTrial.json, InsuranceClaim.json) from build/contracts/ → client/src/.
+Update contract addresses in client/src/App.js.
+5️⃣ Run the App
+``` bash
+cd client
+npm start
+```
+
+👩‍💻 Author: Aishwarya Sreejith
+🩺 'Your Health — Verified' on the Blockchain.
