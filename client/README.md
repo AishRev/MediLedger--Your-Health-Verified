@@ -1,70 +1,128 @@
-# Getting Started with Create React App
+# 🏥 MediLedger  
+**Tagline:** *Your Health, Verified.*
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+## 🩸 Overview  
+**MediLedger** is a comprehensive **decentralized application (DApp)** built on the **Ethereum blockchain** that revolutionizes healthcare data management.  
+It provides a **secure, transparent, and patient-centric platform** for managing:  
+- Electronic Health Records (EHR)  
+- Pharmaceutical Supply Chain  
+- Clinical Trials  
+- Insurance Claims  
 
-In the project directory, you can run:
+MediLedger puts **control back into the hands of patients, doctors, manufacturers, and insurers** through blockchain transparency.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🖼️ Application Preview  
+MediLedger features a **clean, modern, and multi-portal interface** for different user roles, starting with a central dashboard:
+![Selector Dashboard](./assets/LandingPage.png)
+![Selector Dashboard](./assets/LP1.png)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 👤 Patient Portal  
+![Patient Portal](./assets/Patient.png)  
+### 🩺 Doctor Portal  
+![Doctor Portal](./assets/Doctor.png)  
+### 💊 Supply Chain Portal  
+![Supply Chain Portal](./assets/Supply.png)
+### 🔬 Clinical Trial Portal
+![Clinical Trial Portal](./assets/Clinic.png)
+### 📄 Insurance Claim Portal
+![Insurance Claim Portal](./assets/Insuranceclaim.png)
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## ✨ Core Features  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 👤 Patient Portal  
+- **Decentralized Identity:** Register securely using an Ethereum wallet and receive a unique Patient ID (e.g., `P1`).  
+- **Record Management:** Add and view your immutable medical records on the blockchain.  
+- **Access Control:** Grant and revoke access to your records for doctors using their Doctor ID (e.g., `D1`).  
+- **Service Interaction:** Consent to join clinical trials and submit insurance claims directly from your dashboard.  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 🩺 Doctor Portal  
+- **Professional Registration:** Register as a healthcare provider and receive a Doctor ID (e.g., `D1`).  
+- **Secure Record Viewing:** Access patient records only if granted explicit permission.  
+- **Claim Verification:** Review and verify insurance claims from your patients, serving as a trusted intermediary.  
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 💊 Drug Supply Chain Portal  
+- **Manufacturer Registration:** Pharmaceutical companies can register and get a unique Manufacturer ID.  
+- **Drug Tokenization:** Add new drug batches as blockchain tokens, ensuring authenticity and traceability.  
+- **Track and Trace:** Update drug status (e.g., *In-Transit*, *At Pharmacy*) for transparency and anti-counterfeiting.  
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 🔬 Clinical Trial Portal  
+- **Trial Creation:** Research institutions can create and log trials on-chain with complete transparency.  
+- **Tamper-Proof Data Logging:** Log anonymized data hashes for verifiable research integrity.  
+- **Patient Consent:** Patients can securely consent to trial participation recorded on the blockchain.  
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+### 📄 Insurance Claim Portal  
+- **Seamless Submission:** Patients can file insurance claims for treatments directly.  
+- **Multi-Party Verification:** Claims undergo doctor verification and insurer approval, each step immutably recorded.  
+- **Transparent Status Tracking:** Track claim progress from submission to approval or rejection.  
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🛠️ Technology Stack  
+| Component | Technology |
+|------------|-------------|
+| **Blockchain** | Solidity, Truffle Suite, Ganache |
+| **Front-End** | React.js, Ethers.js, JavaScript (ES6+), CSS3 |
+| **Wallet & Authentication** | MetaMask |
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 📜 License  
+This project is licensed under the terms of the **MIT License**.
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🚀 Getting Started  
+Follow these steps to set up, deploy, and run the project locally.
 
-### Making a Progressive Web App
+### ✅ Prerequisites  
+Make sure you have the following installed:  
+- **Node.js** (v14 or higher)  
+- **Truffle Suite**  
+  ```bash
+  npm install -g truffle
+Ganache
+MetaMask Browser Extension
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🔧 Installation & Setup (Quick Start)
 
-### Advanced Configuration
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/AishRev/MediLedger--Your-Health-Verified.git
+cd MediLedger--Your-Health-Verified
+```
+### 2️⃣ Environment Reset
+Close Ganache, delete the build/ folder.
+In client/, remove node_modules/ and package-lock.json.
+Restart Ganache with a new workspace.
+Reset MetaMask → Settings → Advanced → Reset Account.
+### 3️⃣ Install & Deploy
+```bash
+cd client && npm install && cd ..
+truffle migrate --reset
+``` 
+4️⃣ Configure Front-End
+Copy the four new ABIs (HealthChain.json, DrugSupplyChain.json, ClinicalTrial.json, InsuranceClaim.json) from build/contracts/ → client/src/.
+Update contract addresses in client/src/App.js.
+5️⃣ Run the App
+``` bash
+cd client
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+👩‍💻 Author: Aishwarya Sreejith
+🩺 'Your Health — Verified' on the Blockchain.

@@ -23,6 +23,10 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
+html {
+  scroll-behavior: smooth; /* Enables smooth scrolling for the whole page */
+}
+
 body { margin: 0; font-family: 'Segoe UI', 'Roboto', sans-serif; background-color: var(--background-color); color: var(--text-color); overflow-x: hidden; }
 
 /* --- APP LAYOUT --- */
@@ -39,30 +43,30 @@ body { margin: 0; font-family: 'Segoe UI', 'Roboto', sans-serif; background-colo
 /* --- NEW LANDING PAGE SELECTOR --- */
 .selector-container-landing { width: 100%; position: relative; }
 
+/* --- Landing Page Navbar has been removed --- */
+
 .landing-hero {
   display: flex;
   height: 100vh;
   width: 100vw;
-  /* --- CHANGE: Make the hero section fixed to the viewport --- */
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
   z-index: 1;
   background: var(--card-background);
   transition: opacity 1.5s ease-out; 
 }
 .landing-hero.fade-out {
-  opacity: 0.2; /* Reduce opacity instead of hiding completely */
+  opacity: 0.2;
+  pointer-events: none;
 }
 
 .hero-text-panel {
   flex: 1;
   display: flex;
   align-items: center;
-  padding-left: 15%; /* Increased padding to ensure title is visible */
-  transition: transform 1.5s ease-out, opacity 1s ease-out; /* For slide-out effect */
+  padding-left: 15%;
+  transition: transform 1.5s ease-out, opacity 1s ease-out;
 }
-/* --- NEW: Class to slide the text panel out --- */
 .hero-text-panel.slide-out-left {
   transform: translateX(-150%);
   opacity: 0;
@@ -70,13 +74,13 @@ body { margin: 0; font-family: 'Segoe UI', 'Roboto', sans-serif; background-colo
 
 .hero-title-fixed {
   position: fixed;
-  top: 48%;
+  top: 49%;
   left: 0;
   transform: translateY(-50%) translateX(-45%) rotate(-90deg);
   font-size: 5.7vw;
   color: rgba(0, 86, 179, 0.05);
   font-weight: 800;
-  letter-spacing: 5px;
+  letter-spacing: 7px;
   z-index: 2;
   white-space: nowrap;
   pointer-events: none;
@@ -88,14 +92,14 @@ body { margin: 0; font-family: 'Segoe UI', 'Roboto', sans-serif; background-colo
 
 .quote-main {
   font-family: 'Brush Script MT', 'cursive';
-  font-size: 5rem;
+  font-size: 4rem;
   margin: 0;
   color: var(--primary-color);
   line-height: 1.2;
 }
 
 .quote-sub {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   color: #555;
   max-width: 500px;
   line-height: 1.6;
@@ -123,7 +127,7 @@ body { margin: 0; font-family: 'Segoe UI', 'Roboto', sans-serif; background-colo
   justify-content: center;
   gap: 2rem;
   padding: 6rem 2rem;
-  min-height: 50vh; /* Ensure it takes up space to scroll over */
+  min-height: 50vh;
 }
 
 .card { 
@@ -141,7 +145,6 @@ body { margin: 0; font-family: 'Segoe UI', 'Roboto', sans-serif; background-colo
 .card h2 { margin-top: 0; color: var(--primary-color); }
 .card p { font-size: 0.9rem; color: #666; }
 
-/* Scroll-triggered animations for cards */
 .card-container.is-visible .card {
   opacity: 1;
 }
@@ -155,6 +158,48 @@ body { margin: 0; font-family: 'Segoe UI', 'Roboto', sans-serif; background-colo
 .card-container.is-visible .card:nth-child(3) { animation-delay: 0.3s; }
 .card-container.is-visible .card:nth-child(4) { animation-delay: 0.4s; }
 .card-container.is-visible .card:nth-child(5) { animation-delay: 0.5s; }
+
+
+/* --- UPDATED: Contact Section --- */
+.contact-container {
+    position: relative;
+    z-index: 3;
+    /* background: var(--background-color); */
+    padding: 6rem 2rem;
+    text-align: center;
+    opacity: 0; /* Hidden by default for animation */
+}
+.contact-container.is-visible {
+    animation: fadeIn 1s ease-out forwards;
+}
+.contact-container h2 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+.contact-details {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+.contact-card {
+    background: var(--card-background);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 400px; /* Control the max width of the single card */
+    text-align: left;
+}
+.contact-card h3 {
+    margin-top: 0;
+    color: var(--secondary-color);
+    font-size: 1.5rem;
+}
+.contact-card p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0.5rem 0;
+}
 
 
 /* --- DASHBOARD STYLES --- */
