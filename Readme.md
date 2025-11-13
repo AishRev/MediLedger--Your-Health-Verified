@@ -37,8 +37,8 @@ MediLedger features a **clean, modern, and multi-portal interface** for differen
 
 ### 👤 Patient Portal  
 - **Decentralized Identity:** Register securely using an Ethereum wallet and receive a unique Patient ID (e.g., `P1`).  
-- **Record Management:** Add and view your immutable medical records on the blockchain.  
-- **Access Control:** Grant and revoke access to your records for doctors using their Doctor ID (e.g., `D1`).  
+- **Record Management:** "Upload" medical documents.Add and view your immutable medical records on the blockchain.  
+- **Access Control:** Grant and revoke access to your records for doctors using their Doctor ID (e.g., `D1`). The doctor receives both the file hash and the decryption key.  
 - **Service Interaction:** Consent to join clinical trials and submit insurance claims directly from your dashboard.  
 
 ---
@@ -65,7 +65,7 @@ MediLedger features a **clean, modern, and multi-portal interface** for differen
 ---
 
 ### 📄 Insurance Claim Portal  
-- **Seamless Submission:** Patients can file insurance claims for treatments directly.  
+- **Seamless Submission:** Patients can file insurance claims for treatments directly, attaching simulated supporting documents (file hash and decryption key) for proof.  
 - **Multi-Party Verification:** Claims undergo doctor verification and insurer approval, each step immutably recorded.  
 - **Transparent Status Tracking:** Track claim progress from submission to approval or rejection.  
 
@@ -94,3 +94,5 @@ Make sure you have the following installed:
 - **Truffle Suite**  
   ```bash
   npm install -g truffle
+
+
