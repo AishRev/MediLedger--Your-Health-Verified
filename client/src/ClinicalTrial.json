@@ -9941,12 +9941,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xe39dDBf8d8bC421CEcaa635eD2568926963dA511",
-      "transactionHash": "0x72c68628fdbadac3f19c8b03dd43e710fafa7f0c75ce6bd64f0dce042082329b"
+      "address": "0x7e0e31B35eC8984466aeD39fD5A1C77c5bE34e07",
+      "transactionHash": "0xfa7dfafdf970c427a69bf884c62bc581a4d5d730d881776b02e19bf92385a39f"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-10-05T09:05:41.631Z",
+  "updatedAt": "2025-11-13T19:12:32.808Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

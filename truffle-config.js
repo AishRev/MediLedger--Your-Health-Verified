@@ -118,7 +118,8 @@ module.exports = {
     }
   },
 
-  // Truffle DB is currently disabled by default; to enable it, change enabled:
+  // Truffle DB is currently
+  //  disabled by default; to enable it, change enabled:
   // false to enabled: true. The default storage location can also be
   // overridden by specifying the adapter settings, as shown in the commented code below.
   //

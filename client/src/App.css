@@ -139,7 +139,7 @@ body { margin: 0; font-family: 'Segoe UI', 'Roboto', sans-serif; background-colo
   transition: transform 0.3s ease, box-shadow 0.3s ease; 
   cursor: pointer; 
   width: 280px; 
-  opacity: 0;
+  opacity: 1;
 }
 .card:hover { transform: translateY(-10px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); }
 .card h2 { margin-top: 0; color: var(--primary-color); }
@@ -223,3 +223,53 @@ button:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 123, 
 ul { list-style-type: none; padding: 0; }
 li { background-color: #f9f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.95rem; word-wrap: break-word; border-left: 4px solid var(--primary-color); }
 
+/* --- NEW: File Input & Record List Styles --- */
+.file-input-label {
+  display: block;
+  padding: 12px;
+  background: #f8f9fa;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #555;
+}
+.file-input-label:hover {
+  background: #f1f1f1;
+}
+input[type="file"] {
+  display: none;
+}
+
+.record-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+.record-list li {
+  display: contents; /* Makes li act as a container for grid items */
+}
+.record-list span {
+  padding: 10px;
+  background: #f9f9fa;
+  border-radius: 4px;
+  word-wrap: break-word;
+}
+.record-list .record-header span {
+  background: #e9ecef;
+  font-weight: bold;
+}
+.record-list .key {
+  color: var(--secondary-color);
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+.record-list .hash {
+  font-family: 'Courier New', Courier, monospace;
+  color: #777;
+}
+.record-list .status {
+  font-weight: bold;
+  color: var(--primary-color);
+}

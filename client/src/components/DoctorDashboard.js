@@ -1,10 +1,10 @@
-
 // import { useState, useEffect, useCallback } from 'react';
 
-// const DoctorDashboard = ({ contract, account, setView }) => {
+// const DoctorDashboard = ({ healthContract, claimContract, setView }) => {
 //     const [doctorView, setDoctorView] = useState('loading');
 //     const [doctorInfo, setDoctorInfo] = useState(null);
 //     const [allPatients, setAllPatients] = useState([]);
+//     const [pendingClaims, setPendingClaims] = useState([]);
     
 //     const [doctorNameInput, setDoctorNameInput] = useState('');
 //     const [patientIdInput, setPatientIdInput] = useState('');
@@ -15,54 +15,63 @@
 //     const handleTxError = (err) => { setError(err.reason || "An error occurred.") };
 
 //     const loadInitialData = useCallback(async () => {
-//         if (contract) {
-//             setError('');
+//         if (healthContract && claimContract) {
 //             try {
-//                 // Check if the current user is a registered doctor
-//                 const data = await contract.getMyDoctorProfile();
+//                 const data = await healthContract.getMyDoctorProfile();
 //                 setDoctorInfo({ id: `D${Number(data[0])}`, name: data[1] });
 //                 setDoctorView('dashboard');
+
+//                 const [patientIds, patientNames] = await healthContract.getAllPatients();
+//                 setAllPatients(patientNames.map((name, i) => ({ id: Number(patientIds[i]), name })));
+
+//                 const allClaimIds = await claimContract.getAllClaimIds();
+//                 const claimsDetails = await Promise.all(
+//                     allClaimIds.map(id => claimContract.claims(id))
+//                 );
+//                 const filteredClaims = claimsDetails.filter(claim => Number(claim.status) === 0);
+//                 setPendingClaims(filteredClaims);
+
 //             } catch (err) {
-//                 // This is expected if they are not yet registered
 //                 setDoctorView('register');
 //             }
-//             try {
-//                 // Fetch the patient directory regardless of registration status
-//                 const [patientIds, patientNames] = await contract.getAllPatients();
-//                 setAllPatients(patientNames.map((name, i) => ({ id: Number(patientIds[i]), name })));
-//             } catch (err) {
-//                 console.warn("Could not fetch patient directory, it might be empty.", err);
-//             }
 //         }
-//     }, [contract]);
+//     }, [healthContract, claimContract]);
 
-//     useEffect(() => {
-//         loadInitialData();
-//     }, [loadInitialData]);
+//     useEffect(() => { loadInitialData(); }, [loadInitialData]);
 
 //     const handleRegisterDoctor = async () => {
 //         if (!doctorNameInput) return;
 //         try {
-//             const tx = await contract.registerDoctor(doctorNameInput);
+//             const tx = await healthContract.registerDoctor(doctorNameInput);
 //             await tx.wait();
-//             // Reload all data to reflect the new registration status
 //             await loadInitialData();
 //         } catch (err) { handleTxError(err); }
 //     };
-
+    
 //     const handleViewRecords = async () => {
 //         const patientId = patientIdInput.toUpperCase().replace('P', '');
 //         if (!patientId) return;
 //         setError('');
 //         setRecordsForPatient([]);
 //         try {
-//             const records = await contract.viewRecordsById(patientId);
+//             const records = await healthContract.viewRecordsById(patientId);
 //             setRecordsForPatient(records);
 //             if (records.length === 0) {
 //                 setError("No records found for this patient.");
 //             }
 //         } catch (err) { 
 //             setError(err.reason || "Could not view records. Ensure the patient ID is correct and you have been granted access.");
+//         }
+//     };
+
+//     const handleVerifyClaim = async (claimId) => {
+//         try {
+//             const tx = await claimContract.verifyClaim(claimId);
+//             await tx.wait();
+//             alert(`Claim #${claimId} verified successfully!`);
+//             loadInitialData(); // Refresh the list
+//         } catch (err) {
+//             handleTxError(err);
 //         }
 //     };
 
@@ -83,6 +92,21 @@
 //                 <h2>Doctor Profile</h2>
 //                 <p><strong>Doctor ID:</strong> {doctorInfo?.id}</p>
 //                 <p><strong>Name:</strong> {doctorInfo?.name}</p>
+//             </div>
+//             <div className="dashboard-section">
+//                 <h3>Claims Awaiting Your Verification</h3>
+//                 {pendingClaims.length > 0 ? (
+//                     <ul>
+//                         {pendingClaims.map(claim => (
+//                             <li key={Number(claim.id)}>
+//                                 <strong>Claim ID: {Number(claim.id)}</strong> - for Patient ID: {Number(claim.patientId)}
+//                                 <br/>
+//                                 <small>Procedure: {claim.procedureName}</small>
+//                                 <button style={{float: 'right', marginTop: '-10px'}} onClick={() => handleVerifyClaim(claim.id)}>Verify</button>
+//                             </li>
+//                         ))}
+//                     </ul>
+//                 ) : <p>There are no claims awaiting verification.</p>}
 //             </div>
 //             <div className="dashboard-section">
 //                 <h3>View Patient Records</h3>
@@ -126,56 +150,85 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const DoctorDashboard = ({ healthContract, claimContract, setView }) => {
-    const [doctorView, setDoctorView] = useState('loading');
+    // This state manages the view *within* the doctor dashboard
+    const [doctorView, setDoctorView] = useState('loading'); // loading, register, dashboard
+    
+    // This state holds all the data fetched from the blockchain
     const [doctorInfo, setDoctorInfo] = useState(null);
     const [allPatients, setAllPatients] = useState([]);
     const [pendingClaims, setPendingClaims] = useState([]);
     
+    // These states hold the user's input from form fields
     const [doctorNameInput, setDoctorNameInput] = useState('');
     const [patientIdInput, setPatientIdInput] = useState('');
     const [recordsForPatient, setRecordsForPatient] = useState([]);
     
     const [error, setError] = useState('');
 
+    // A helper function to format status numbers into readable text
+    const getStatusText = (status) => {
+        const statuses = ['Submitted', 'Verified by Doctor', 'Approved', 'Rejected'];
+        return statuses[Number(status)];
+    };
+
+    // A helper function to set error messages
     const handleTxError = (err) => { setError(err.reason || "An error occurred.") };
 
+    // This function loads all the initial data for the doctor dashboard
     const loadInitialData = useCallback(async () => {
         if (healthContract && claimContract) {
+            setError('');
             try {
+                // 1. Check if the user is a registered doctor
                 const data = await healthContract.getMyDoctorProfile();
                 setDoctorInfo({ id: `D${Number(data[0])}`, name: data[1] });
-                setDoctorView('dashboard');
+                setDoctorView('dashboard'); // If successful, show the dashboard
 
+                // 2. Fetch the directory of all patients
                 const [patientIds, patientNames] = await healthContract.getAllPatients();
                 setAllPatients(patientNames.map((name, i) => ({ id: Number(patientIds[i]), name })));
 
+                // 3. Fetch all claims and filter for pending ones
                 const allClaimIds = await claimContract.getAllClaimIds();
                 const claimsDetails = await Promise.all(
                     allClaimIds.map(id => claimContract.claims(id))
                 );
+                // Filter for claims that are "Submitted" (Status == 0)
                 const filteredClaims = claimsDetails.filter(claim => Number(claim.status) === 0);
                 setPendingClaims(filteredClaims);
 
             } catch (err) {
+                // If getMyDoctorProfile fails, it means they aren't registered
                 setDoctorView('register');
             }
         }
     }, [healthContract, claimContract]);
 
-    useEffect(() => { loadInitialData(); }, [loadInitialData]);
+    // This runs the loadInitialData function once when the component first renders
+    useEffect(() => { 
+        loadInitialData(); 
+    }, [loadInitialData]);
+
+    // --- Handler Functions ---
 
     const handleRegisterDoctor = async () => {
         if (!doctorNameInput) return;
         try {
             const tx = await healthContract.registerDoctor(doctorNameInput);
             await tx.wait();
-            await loadInitialData();
+            await loadInitialData(); // Reload all data to log the user in
         } catch (err) { handleTxError(err); }
     };
     
     const handleViewRecords = async () => {
         const patientId = patientIdInput.toUpperCase().replace('P', '');
         if (!patientId) return;
+        
+        if (isNaN(patientId) || Number(patientId) <= 0) {
+            setError("Invalid Patient ID format. Please use 'P1', 'P2', etc.");
+            return;
+        }
+
         setError('');
         setRecordsForPatient([]);
         try {
@@ -194,12 +247,15 @@ const DoctorDashboard = ({ healthContract, claimContract, setView }) => {
             const tx = await claimContract.verifyClaim(claimId);
             await tx.wait();
             alert(`Claim #${claimId} verified successfully!`);
-            loadInitialData(); // Refresh the list
+            loadInitialData(); // Refresh the list of pending claims
         } catch (err) {
             handleTxError(err);
         }
     };
 
+    // --- Render Functions ---
+
+    // This is shown if the user's address is not found in the doctor mapping
     const renderRegisterView = () => (
         <div className="dashboard-content">
             <div className="dashboard-section">
@@ -211,6 +267,7 @@ const DoctorDashboard = ({ healthContract, claimContract, setView }) => {
         </div>
     );
 
+    // This is shown after the user is registered
     const renderDashboardView = () => (
          <div className="dashboard-content">
             <div className="dashboard-section">
@@ -221,13 +278,19 @@ const DoctorDashboard = ({ healthContract, claimContract, setView }) => {
             <div className="dashboard-section">
                 <h3>Claims Awaiting Your Verification</h3>
                 {pendingClaims.length > 0 ? (
-                    <ul>
+                    <ul className="record-list">
+                         <li className="record-header">
+                            <span>Claim ID</span>
+                            <span>Patient ID</span>
+                            <span>Procedure</span>
+                            <span>Action</span>
+                        </li>
                         {pendingClaims.map(claim => (
                             <li key={Number(claim.id)}>
-                                <strong>Claim ID: {Number(claim.id)}</strong> - for Patient ID: {Number(claim.patientId)}
-                                <br/>
-                                <small>Procedure: {claim.procedureName}</small>
-                                <button style={{float: 'right', marginTop: '-10px'}} onClick={() => handleVerifyClaim(claim.id)}>Verify</button>
+                                <span>{Number(claim.id)}</span>
+                                <span>P{Number(claim.patientId)}</span>
+                                <span>{claim.procedureName}</span>
+                                <span><button style={{padding: '8px 12px', margin: 0}} onClick={() => handleVerifyClaim(claim.id)}>Verify</button></span>
                             </li>
                         ))}
                     </ul>
@@ -241,7 +304,20 @@ const DoctorDashboard = ({ healthContract, claimContract, setView }) => {
                 {recordsForPatient.length > 0 && (
                     <div style={{marginTop: '1rem'}}>
                         <h4>Records for Patient {patientIdInput.toUpperCase()}:</h4>
-                        <ul>{recordsForPatient.map((r, i) => <li key={i}>{r}</li>)}</ul>
+                        <ul className="record-list">
+                            <li className="record-header">
+                                <span>Record Name</span>
+                                <span>Decryption Key</span>
+                                <span>File Hash (Proof)</span>
+                            </li>
+                            {recordsForPatient.map((r, i) => (
+                                <li key={i}>
+                                    <span>{r.recordName}</span>
+                                    <span className="key">{r.decryptionKey}</span>
+                                    <span className="hash">{r.fileHash.substring(0, 16)}...</span>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 )}
             </div>
@@ -254,6 +330,7 @@ const DoctorDashboard = ({ healthContract, claimContract, setView }) => {
         </div>
     );
 
+    // Main component return
     return (
         <div className="dashboard">
              <div className="dashboard-header">
@@ -270,4 +347,3 @@ const DoctorDashboard = ({ healthContract, claimContract, setView }) => {
 };
 
 export default DoctorDashboard;
-

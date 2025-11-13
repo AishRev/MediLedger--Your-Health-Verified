@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-// A single, unified contract for all healthcare functions.
 contract HealthChain {
-
-    // ----------- STATE VARIABLES -----------
     uint public patientCounter;
     uint public doctorCounter;
+
+    struct MedicalRecord {
+        string recordName;
+        string fileHash;
+        string decryptionKey;
+    }
 
     struct Patient {
         uint id;
@@ -14,7 +17,7 @@ contract HealthChain {
         uint age;
         address walletAddress;
         bool isRegistered;
-        string[] medicalRecords;
+        MedicalRecord[] medicalRecords;
         mapping(uint => bool) accessGranted; // doctorId => hasAccess
     }
 
@@ -25,15 +28,13 @@ contract HealthChain {
         bool isRegistered;
     }
 
-    // Mappings for direct lookup
     mapping(address => uint) public addressToPatientId;
     mapping(address => uint) public addressToDoctorId;
     mapping(uint => Patient) public patients;
     mapping(uint => Doctor) public doctors;
 
-    // ----------- PATIENT FUNCTIONS -----------
     function registerPatient(string memory _name, uint _age) public {
-        require(addressToPatientId[msg.sender] == 0, "This wallet is already registered as a patient.");
+        require(addressToPatientId[msg.sender] == 0, "Patient already registered.");
         patientCounter++;
         addressToPatientId[msg.sender] = patientCounter;
 
@@ -45,39 +46,38 @@ contract HealthChain {
         newPatient.isRegistered = true;
     }
 
-    function addRecord(string memory _recordHash) public {
+    function addRecord(string memory _recordName, string memory _fileHash, string memory _decryptionKey) public {
         uint patientId = addressToPatientId[msg.sender];
-        require(patientId != 0, "You must be a registered patient to add records.");
-        patients[patientId].medicalRecords.push(_recordHash);
+        require(patientId != 0, "Patient not registered.");
+        patients[patientId].medicalRecords.push(MedicalRecord(_recordName, _fileHash, _decryptionKey));
     }
 
     function grantAccessById(uint _doctorId) public {
         uint patientId = addressToPatientId[msg.sender];
-        require(patientId != 0, "You must be a registered patient.");
+        require(patientId != 0, "Patient not registered.");
         require(doctors[_doctorId].isRegistered, "Doctor ID does not exist.");
         patients[patientId].accessGranted[_doctorId] = true;
     }
 
-    function getMyPatientProfile() public view returns (uint, string memory, uint, string[] memory) {
+    function getMyPatientProfile() public view returns (uint, string memory, uint, MedicalRecord[] memory) {
         uint patientId = addressToPatientId[msg.sender];
         require(patientId != 0, "Patient not registered.");
         Patient storage p = patients[patientId];
         return (p.id, p.name, p.age, p.medicalRecords);
     }
 
-    // ----------- DOCTOR FUNCTIONS -----------
     function registerDoctor(string memory _name) public {
-        require(addressToDoctorId[msg.sender] == 0, "This wallet is already registered as a doctor.");
+        require(addressToDoctorId[msg.sender] == 0, "Doctor already registered.");
         doctorCounter++;
         addressToDoctorId[msg.sender] = doctorCounter;
         doctors[doctorCounter] = Doctor(doctorCounter, _name, msg.sender, true);
     }
 
-    function viewRecordsById(uint _patientId) public view returns (string[] memory) {
+    function viewRecordsById(uint _patientId) public view returns (MedicalRecord[] memory) {
         uint doctorId = addressToDoctorId[msg.sender];
-        require(doctorId != 0, "You must be a registered doctor to view records.");
+        require(doctorId != 0, "Only registered doctors can view records.");
         require(patients[_patientId].isRegistered, "Patient ID does not exist.");
-        require(patients[_patientId].accessGranted[doctorId], "Access denied. The patient has not granted you access to their records.");
+        require(patients[_patientId].accessGranted[doctorId], "Access denied.");
         return patients[_patientId].medicalRecords;
     }
     
@@ -88,7 +88,6 @@ contract HealthChain {
         return (d.id, d.name);
     }
 
-    // ----------- PUBLIC GETTER FUNCTIONS FOR DIRECTORIES -----------
     function getAllDoctors() public view returns (uint[] memory, string[] memory) {
         uint[] memory ids = new uint[](doctorCounter);
         string[] memory names = new string[](doctorCounter);
